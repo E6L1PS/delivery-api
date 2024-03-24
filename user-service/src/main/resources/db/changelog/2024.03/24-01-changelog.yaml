@@ -1,0 +1,35 @@
+databaseChangeLog:
+  - changeSet:
+      id: add-init-authority-data
+      author: pesternikov.d.y.
+      changes:
+        - insert:
+            tableName: authority
+            columns:
+              - column:
+                  name: authority
+                  value: "ROLE_USER"
+        - insert:
+            tableName: authority
+            columns:
+              - column:
+                  name: authority
+                  value: "ROLE_ADMIN"
+
+  - changeSet:
+      id: add-init-users-data
+      author: pesternikov.d.y.
+      changes:
+        - loadData:
+            tableName: user_account
+            file: user-data.csv
+            relativeToChangelogFile: true
+
+  - changeSet:
+      id: add-init-user-authority-data
+      author: pesternikov.d.y.
+      changes:
+        - loadData:
+            tableName: user_authority
+            file: user-authority-data.csv
+            relativeToChangelogFile: true
