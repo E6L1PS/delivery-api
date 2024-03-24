@@ -2,6 +2,16 @@
 
 Пестерников Данил (М8О-114М) - Вариант 6 - Сервис доставки
 
+## Запуск приложения
+
+1. Клонируйте репозиторий: `git clone https://github.com/E6L1PS/delivery-api`
+2. Перейдите в директорию проекта: `cd delivery-api`
+3. Если требуется, измените файлы конфигурации `.env`, `application.yml`.
+4. Запустите контейнеры: `docker compose up --build -d`
+5. OpenApi Specification `http://localhost:8080/swagger-ui/index.html`
+6. Пользователь с ролью `ADMIN`: `username: admin, password: admin`
+
+## Структура работы
 Task-1:
 1. Создать файлы с описанием «архитектуры» согласно вашему варианту задания
 в Structurizr Lite.

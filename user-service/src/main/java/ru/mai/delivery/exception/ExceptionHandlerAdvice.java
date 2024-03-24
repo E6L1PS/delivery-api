@@ -5,6 +5,7 @@ import org.springframework.context.MessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -32,9 +33,9 @@ public class ExceptionHandlerAdvice {
         return ResponseEntity.badRequest().body(problemDetail);
     }
 
-    @ExceptionHandler(UsernameAlreadyExistsException.class)
+    @ExceptionHandler({UsernameAlreadyExistsException.class, UsernameNotFoundException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseError handleBindException(UsernameAlreadyExistsException exception) {
+    public ResponseError handleBindException(Exception exception) {
         return ResponseError.builder()
                 .message(exception.getMessage())
                 .httpStatus(HttpStatus.BAD_REQUEST)
