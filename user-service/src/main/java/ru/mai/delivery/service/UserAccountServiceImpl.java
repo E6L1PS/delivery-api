@@ -2,10 +2,13 @@ package ru.mai.delivery.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,6 +16,7 @@ import ru.mai.delivery.config.JwtService;
 import ru.mai.delivery.dto.LoginDto;
 import ru.mai.delivery.dto.RegisterDto;
 import ru.mai.delivery.dto.TokenDto;
+import ru.mai.delivery.dto.UserInfoDto;
 import ru.mai.delivery.exception.UsernameAlreadyExistsException;
 import ru.mai.delivery.mapper.UserAccountMapper;
 import ru.mai.delivery.model.Authority;
@@ -48,6 +52,11 @@ public class UserAccountServiceImpl implements UserAccountService {
     private final PasswordEncoder passwordEncoder;
 
     @Override
+    public Page<UserInfoDto> searchUsersByMask(String firstName, String lastName, PageRequest pageRequest) {
+        return userAccountRepository.findByFirstNameLikeAndLastNameLike(firstName, lastName, pageRequest);
+    }
+
+    @Override
     public void register(RegisterDto registerDto) {
         if (userAccountRepository.existsUserAccountByUsername(registerDto.username())) {
             throw new UsernameAlreadyExistsException(
@@ -74,9 +83,28 @@ public class UserAccountServiceImpl implements UserAccountService {
                         loginDto.password()
                 )
         );
-
         UserDetails userDetails = userDetailsService.loadUserByUsername(loginDto.username());
         return jwtService.generateToken(userDetails);
+    }
+
+    @Override
+    public void updateUserInfo(UserInfoDto userInfoDto, UserDetails userDetails) {
+        userAccountRepository.updateFirstNameAndLastNameAndNumberAndEmailByUsername(
+                userDetails.getUsername(),
+                userInfoDto.firstName(),
+                userInfoDto.lastName(),
+                userInfoDto.number(),
+                userInfoDto.email()
+        );
+    }
+
+    @Override
+    public void deleteUserByUsername(String username) {
+        if (userAccountRepository.existsUserAccountByUsername(username)) {
+            userAccountRepository.deleteByUsername(username);
+        } else throw new UsernameNotFoundException(
+                "Пользователь с именем: '" + username + "' не существует!"
+        );
     }
 
 }
