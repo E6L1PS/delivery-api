@@ -9,13 +9,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.mai.delivery.dto.LoginDto;
 import ru.mai.delivery.dto.RegisterDto;
 import ru.mai.delivery.dto.TokenDto;
 import ru.mai.delivery.dto.UserInfoDto;
+import ru.mai.delivery.model.UserAccount;
 import ru.mai.delivery.service.UserAccountService;
 
 /**
@@ -66,9 +66,9 @@ public class UserAccountController {
     @PutMapping
     public ResponseEntity<?> updateUserInfo(
             @RequestBody UserInfoDto userInfoDto,
-            @AuthenticationPrincipal UserDetails userDetails
+            @AuthenticationPrincipal UserAccount userAccount
     ) {
-        userAccountService.updateUserInfo(userInfoDto, userDetails);
+        userAccountService.updateUserInfo(userInfoDto, userAccount);
         return ResponseEntity.ok().build();
     }
 
