@@ -22,8 +22,8 @@ databaseChangeLog:
       changes:
         - loadData:
             tableName: user_account
-            file: user-data.csv
-            relativeToChangelogFile: true
+            file: data/user-data.csv
+            relativeToChangelogFile: false
 
   - changeSet:
       id: add-init-user-authority-data
@@ -31,5 +31,5 @@ databaseChangeLog:
       changes:
         - loadData:
             tableName: user_authority
-            file: user-authority-data.csv
-            relativeToChangelogFile: true
+            file: data/user-authority-data.csv
+            relativeToChangelogFile: false

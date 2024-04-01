@@ -23,6 +23,8 @@ public interface UserAccountService {
 
     void updateUserInfo(UserInfoDto userInfoDto, UserDetails userDetails);
 
+    void updateUserInfoById(Long userInfo, UserInfoDto userInfoDto);
+
     void deleteUserByUsername(String username);
 
 }

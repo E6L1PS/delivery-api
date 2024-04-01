@@ -16,6 +16,8 @@ paths:
     put:
       tags:
       - user-account-controller
+      description: "Обновление данных пользователя (текущего пользователя, который\
+        \ авторизован)"
       operationId: updateUserInfo
       requestBody:
         content:
@@ -32,15 +34,12 @@ paths:
                 oneOf:
                 - $ref: '#/components/schemas/ResponseError'
                 - $ref: '#/components/schemas/ProblemDetail'
-        "200":
-          description: OK
-          content:
-            '*/*':
-              schema:
-                type: object
+        "204":
+          description: No Content
     delete:
       tags:
       - user-account-controller
+      description: Удаление пользователя по id
       operationId: deleteUserByUsername
       parameters:
       - name: username
@@ -57,16 +56,43 @@ paths:
                 oneOf:
                 - $ref: '#/components/schemas/ResponseError'
                 - $ref: '#/components/schemas/ProblemDetail'
-        "200":
-          description: OK
+        "204":
+          description: No Content
+  /api/v1/account/{id}:
+    put:
+      tags:
+      - user-account-controller
+      description: Обновление данных пользователя по id
+      operationId: updateUserInfoById
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserInfoDto'
+        required: true
+      responses:
+        "400":
+          description: Bad Request
           content:
             '*/*':
               schema:
-                type: object
+                oneOf:
+                - $ref: '#/components/schemas/ResponseError'
+                - $ref: '#/components/schemas/ProblemDetail'
+        "204":
+          description: No Content
   /api/v1/account/reg:
     post:
       tags:
       - user-account-controller
+      description: Регистрация нового пользователя
       operationId: register
       requestBody:
         content:
@@ -83,16 +109,13 @@ paths:
                 oneOf:
                 - $ref: '#/components/schemas/ResponseError'
                 - $ref: '#/components/schemas/ProblemDetail'
-        "200":
-          description: OK
-          content:
-            '*/*':
-              schema:
-                type: object
+        "201":
+          description: Created
   /api/v1/account/auth:
     post:
       tags:
       - user-account-controller
+      description: Аутентификация пользователя
       operationId: authenticate
       requestBody:
         content:
@@ -119,6 +142,7 @@ paths:
     get:
       tags:
       - user-account-controller
+      description: Поиск по маске
       operationId: searchUsersByMask
       parameters:
       - name: firstName
@@ -274,8 +298,31 @@ components:
         email:
           type: string
     RegisterDto:
+      required:
+      - email
       type: object
       properties:
+        firstName:
+          maxLength: 50
+          minLength: 5
+          type: string
+          description: Имя
+        lastName:
+          maxLength: 50
+          minLength: 5
+          type: string
+          description: Фамилия
+        number:
+          maxLength: 20
+          minLength: 5
+          pattern: "^[0-9]{5,20}$"
+          type: string
+          description: Номер телефона
+          example: "79221110500"
+        email:
+          type: string
+          description: email
+          example: email@email.ru
         username:
           maxLength: 255
           minLength: 5
@@ -291,8 +338,12 @@ components:
       properties:
         username:
           type: string
+          description: Имя пользователя
+          example: admin
         password:
           type: string
+          description: Пароль
+          example: admin
     TokenDto:
       type: object
       properties:
@@ -354,9 +405,9 @@ components:
         pageSize:
           type: integer
           format: int32
-        paged:
-          type: boolean
         unpaged:
+          type: boolean
+        paged:
           type: boolean
     SortObject:
       type: object

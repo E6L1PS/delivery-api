@@ -84,8 +84,19 @@ public class UserAccountServiceImpl implements UserAccountService {
 
     @Override
     public void updateUserInfo(UserInfoDto userInfoDto, UserDetails userDetails) {
-        userAccountRepository.updateFirstNameAndLastNameAndNumberAndEmailByUsername(
-                userDetails.getUsername(),
+        userAccountRepository.updateFirstNameAndLastNameAndNumberAndEmailByUser(
+                userDetails,
+                userInfoDto.firstName(),
+                userInfoDto.lastName(),
+                userInfoDto.number(),
+                userInfoDto.email()
+        );
+    }
+
+    @Override
+    public void updateUserInfoById(Long id, UserInfoDto userInfoDto) {
+        userAccountRepository.updateFirstNameAndLastNameAndNumberAndEmailByUserId(
+                id,
                 userInfoDto.firstName(),
                 userInfoDto.lastName(),
                 userInfoDto.number(),

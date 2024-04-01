@@ -1,5 +1,6 @@
 package ru.mai.delivery.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -31,6 +32,8 @@ public class UserAccountController {
 
     public final UserAccountService userAccountService;
 
+    @Operation(description = "Поиск по маске")
+    @ResponseStatus(HttpStatus.OK)
     @GetMapping("/search")
     public ResponseEntity<Page<UserInfoDto>> searchUsersByMask(
             @RequestParam("firstName") String firstName,
@@ -46,14 +49,18 @@ public class UserAccountController {
         return ResponseEntity.ok(userInfoDtos);
     }
 
+    @Operation(description = "Регистрация нового пользователя")
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/reg")
-    public ResponseEntity<?> register(
+    public ResponseEntity<Void> register(
             @Valid @RequestBody RegisterDto registerDto
     ) {
         userAccountService.register(registerDto);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
+    @Operation(description = "Аутентификация пользователя")
+    @ResponseStatus(HttpStatus.OK)
     @PostMapping("/auth")
     public ResponseEntity<TokenDto> authenticate(
             @Valid @RequestBody LoginDto loginDto
@@ -62,23 +69,39 @@ public class UserAccountController {
         return ResponseEntity.ok(tokenDto);
     }
 
+    @Operation(description = "Обновление данных пользователя (текущего пользователя, который авторизован) {'ROLE_USER', 'ROLE_ADMIN'}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasAnyAuthority({'ROLE_USER', 'ROLE_ADMIN'})")
     @PutMapping
-    public ResponseEntity<?> updateUserInfo(
+    public ResponseEntity<Void> updateUserInfo(
             @RequestBody UserInfoDto userInfoDto,
             @AuthenticationPrincipal UserAccount userAccount
     ) {
         userAccountService.updateUserInfo(userInfoDto, userAccount);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
+    @Operation(description = "Обновление данных пользователя по id. {'ROLE_ADMIN'}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PutMapping("/{id:\\d+}")
+    public ResponseEntity<Void> updateUserInfoById(
+            @PathVariable(name = "id") Long id,
+            @RequestBody UserInfoDto userInfoDto
+    ) {
+        userAccountService.updateUserInfoById(id, userInfoDto);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    @Operation(description = "Удаление пользователя по id. {'ROLE_ADMIN'}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @DeleteMapping
-    public ResponseEntity<?> deleteUserByUsername(
+    public ResponseEntity<Void> deleteUserByUsername(
             @RequestParam("username") String username
     ) {
         userAccountService.deleteUserByUsername(username);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
 }

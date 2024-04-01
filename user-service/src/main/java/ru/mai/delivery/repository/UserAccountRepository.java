@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import ru.mai.delivery.dto.UserInfoDto;
@@ -37,10 +38,28 @@ public interface UserAccountRepository extends JpaRepository<UserAccount, Long> 
             u.lastName = COALESCE(:lastName, u.lastName),
             u.number = COALESCE(:number, u.number),
             u.email = COALESCE(:email, u.email)
-            WHERE u.username = :username
+            WHERE u = :userDetails
             """)
-    void updateFirstNameAndLastNameAndNumberAndEmailByUsername(
-            @NotNull @Param("username") String username,
+    void updateFirstNameAndLastNameAndNumberAndEmailByUser(
+            @NotNull @Param("userDetails") UserDetails userDetails,
+            @Nullable @Param("firstName") String firstName,
+            @Nullable @Param("lastName") String lastName,
+            @Nullable @Param("number") String number,
+            @Nullable @Param("email") String email
+    );
+
+    @Transactional
+    @Modifying
+    @Query("""
+            UPDATE UserAccount u
+            SET u.firstName = COALESCE(:firstName, u.firstName),
+            u.lastName = COALESCE(:lastName, u.lastName),
+            u.number = COALESCE(:number, u.number),
+            u.email = COALESCE(:email, u.email)
+            WHERE u.id = :id
+            """)
+    void updateFirstNameAndLastNameAndNumberAndEmailByUserId(
+            @NotNull @Param("id") Long id,
             @Nullable @Param("firstName") String firstName,
             @Nullable @Param("lastName") String lastName,
             @Nullable @Param("number") String number,
