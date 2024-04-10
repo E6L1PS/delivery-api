@@ -19,11 +19,16 @@
 2. Перейдите в директорию проекта: `cd delivery-api`
 3. Если требуется, измените файлы конфигурации `.env`, `application.yml`.
 4. Запустите контейнеры: `docker compose up --build -d`
-5. OpenApi Specification `http://localhost:8080/swagger-ui/index.html`
+5. OpenApi Specification:
+   user-service: `http://localhost:8081/swagger-ui/index.html`
+   parcel-service: `http://localhost:8082/swagger-ui/index.html`
+   delivery-service: `http://localhost:8083/swagger-ui/index.html`
+
 6. Пользователь с ролью `ADMIN`: `username: admin, password: admin`
 
 P.S В папке ресурсов находятся все основные конфигурационные файлы, скрипты, changelog'и, csv-фалы, index.yaml:
 path: `user-service/src/main/resource`
+
 ## Структура работы
 
 Task-1:
@@ -50,3 +55,14 @@ Task-2:
   имени, а также стандартные CRUD операции.
 - Данные о пользователе должны включать логин и пароль. Пароль должен
   храниться в закрытом виде (хэширован)
+
+Task-3:
+Должны выполняться следующие условия:
+
+- Данные должны храниться в СУБД MongoDB;
+- Интерфейс к сущностям должен предоставляться в соответствии со стилем REST;
+- API должен быть специфицирован в OpenAPI 3.0 (должен хранится в index.yaml);
+- Должен быть создан скрипт по созданию базы данных и таблиц, а также
+  наполнению СУБД тестовыми значениями;
+- Для каждой коллекции должен быть создан отдельный сервис, реализующий
+  CRUD операции.
