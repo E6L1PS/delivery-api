@@ -4,6 +4,8 @@ x-api-config: &api-config
   depends_on:
     postgres:
       condition: service_healthy
+    mongodb:
+      condition: service_healthy
 
 x-postgres-healthcheck: &postgres-healthcheck
   healthcheck:
@@ -11,6 +13,13 @@ x-postgres-healthcheck: &postgres-healthcheck
     timeout: 10s
     retries: 10
     test: [ "CMD-SHELL", "sh -c 'pg_isready -U ${POSTGRES_USERNAME} -d ${POSTGRES_DB}'" ]
+
+x-mongodb-healthcheck: &mongodb-healthcheck
+  healthcheck:
+    interval: 5s
+    timeout: 10s
+    retries: 10
+    test: echo 'db.runCommand("ping").ok' | mongosh 127.0.0.1:27017/test --quiet
 
 services:
 
@@ -23,7 +32,29 @@ services:
     env_file:
       - .env
     ports:
-      - '8080:8080'
+      - '8081:8081'
+
+  parcel-service:
+    build:
+      context: ./parcel-service
+      dockerfile: Dockerfile
+    container_name: parcel-service
+    <<: *api-config
+    env_file:
+      - .env
+    ports:
+      - '8082:8082'
+
+  delivery-service:
+    build:
+      context: ./delivery-service
+      dockerfile: Dockerfile
+    container_name: delivery-service
+    <<: *api-config
+    env_file:
+      - .env
+    ports:
+      - '8083:8083'
 
   postgres:
     image: 'postgres:16.1'
@@ -37,6 +68,19 @@ services:
       - postgres-data:/var/lib/postgresql/data
       - ./user-service/src/main/resources/init-schema.sql:/docker-entrypoint-initdb.d/init.sql
 
+  mongodb:
+    image: 'mongo:7'
+    container_name: mongodb-parcel
+    <<: *mongodb-healthcheck
+    env_file:
+      - .env
+    ports:
+      - '27018:27017'
+    volumes:
+      - mongodb-data:/data/db
+
 volumes:
   postgres-data:
+    driver: local
+  mongodb-data:
     driver: local

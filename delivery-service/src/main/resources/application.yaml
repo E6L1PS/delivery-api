@@ -1,0 +1,9 @@
+server:
+  port: 8083
+spring:
+  application:
+    name: delivery-service
+
+  data:
+    mongodb:
+      uri: mongodb://mongodb-parcel/delivery
