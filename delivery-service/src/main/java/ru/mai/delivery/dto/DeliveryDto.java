@@ -7,6 +7,7 @@ package ru.mai.delivery.dto;
  */
 public record DeliveryDto(
 
+        String parcelId,
         Long senderId,
         Long recipientId,
         String currentLocation

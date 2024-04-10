@@ -16,7 +16,6 @@ public interface DeliveryMapper {
 
     @Mapping(target = "deliveryStatus", constant = "IN_TRANSIT")
     @Mapping(target = "locations", ignore = true)
-    @Mapping(target = "locations", ignore = true)
     Delivery deliveryDtoToDelivery(DeliveryDto deliveryDto);
 
 }

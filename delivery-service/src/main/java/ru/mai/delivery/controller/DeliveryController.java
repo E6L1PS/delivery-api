@@ -7,6 +7,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.mai.delivery.dto.CurrentLocationDto;
 import ru.mai.delivery.dto.DeliveryDto;
 import ru.mai.delivery.model.Delivery;
 import ru.mai.delivery.service.interfaces.DeliveryService;
@@ -32,6 +33,19 @@ public class DeliveryController {
         return ResponseEntity.ok(deliveryService.findAll(PageRequest.of(page, size, Sort.by(sortBy))));
     }
 
+    @GetMapping("/sender/{senderId}")
+    public ResponseEntity<?> findAllBySenderId(
+            @PathVariable(name = "senderId") Long senderId
+    ) {
+        return ResponseEntity.ok(deliveryService.findAllBySenderId(senderId));
+    }
+
+    @GetMapping("/recipient/{recipientId}")
+    public ResponseEntity<?> findAllByRecipientId(
+            @PathVariable(name = "recipientId") Long recipientId
+    ) {
+        return ResponseEntity.ok(deliveryService.findAllByRecipientId(recipientId));
+    }
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
@@ -54,9 +68,18 @@ public class DeliveryController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(
-            @PathVariable String id
+            @PathVariable(name = "id") String id
     ) {
         deliveryService.delete(id);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PutMapping("/location")
+    public ResponseEntity<Void> changeCurrentLocation(
+            @RequestBody CurrentLocationDto currentLocationDto
+    ) {
+        deliveryService.changeCurrentLocation(currentLocationDto);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 

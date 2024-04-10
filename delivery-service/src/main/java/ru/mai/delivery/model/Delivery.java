@@ -24,6 +24,8 @@ public class Delivery {
     @Id
     private String id;
 
+    private String parcelId;
+
     private Long senderId;
 
     private Long recipientId;

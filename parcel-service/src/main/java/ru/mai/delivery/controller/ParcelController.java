@@ -54,7 +54,7 @@ public class ParcelController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(
-            @PathVariable String id
+            @PathVariable(name = "id") String id
     ) {
         parcelService.delete(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();

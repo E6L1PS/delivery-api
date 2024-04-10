@@ -1,0 +1,247 @@
+openapi: 3.0.1
+info:
+  title: OpenAPI definition
+  version: v0
+servers:
+- url: http://localhost:8083
+  description: Generated server url
+paths:
+  /api/v1/delivery:
+    get:
+      tags:
+      - delivery-controller
+      operationId: findAll
+      parameters:
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 10
+      - name: sortBy
+        in: query
+        required: false
+        schema:
+          type: string
+          default: status
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PageDelivery'
+    put:
+      tags:
+      - delivery-controller
+      operationId: update
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeliveryDto'
+        required: true
+      responses:
+        "204":
+          description: No Content
+    post:
+      tags:
+      - delivery-controller
+      operationId: save
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeliveryDto'
+        required: true
+      responses:
+        "201":
+          description: Created
+  /api/v1/delivery/location:
+    put:
+      tags:
+      - delivery-controller
+      operationId: changeCurrentLocation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CurrentLocationDto'
+        required: true
+      responses:
+        "204":
+          description: No Content
+  /api/v1/delivery/sender/{senderId}:
+    get:
+      tags:
+      - delivery-controller
+      operationId: findAllBySenderId
+      parameters:
+      - name: senderId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+  /api/v1/delivery/recipient/{recipientId}:
+    get:
+      tags:
+      - delivery-controller
+      operationId: findAllByRecipientId
+      parameters:
+      - name: recipientId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+  /api/v1/delivery/{id}:
+    delete:
+      tags:
+      - delivery-controller
+      operationId: delete
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "204":
+          description: No Content
+components:
+  schemas:
+    DeliveryDto:
+      type: object
+      properties:
+        parcelId:
+          type: string
+        senderId:
+          type: integer
+          format: int64
+        recipientId:
+          type: integer
+          format: int64
+        currentLocation:
+          type: string
+    CurrentLocationDto:
+      type: object
+      properties:
+        id:
+          type: string
+        location:
+          type: string
+    Delivery:
+      type: object
+      properties:
+        id:
+          type: string
+        parcelId:
+          type: string
+        senderId:
+          type: integer
+          format: int64
+        recipientId:
+          type: integer
+          format: int64
+        locations:
+          type: array
+          items:
+            $ref: '#/components/schemas/Location'
+        deliveryStatus:
+          type: string
+          enum:
+          - IN_TRANSIT
+          - DELIVERED
+          - RETURNED
+          - LOST
+          - UNKNOWN
+    Location:
+      type: object
+      properties:
+        currentLocation:
+          type: string
+        receiptDateTime:
+          type: string
+          format: date-time
+    PageDelivery:
+      type: object
+      properties:
+        totalPages:
+          type: integer
+          format: int32
+        totalElements:
+          type: integer
+          format: int64
+        size:
+          type: integer
+          format: int32
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/Delivery'
+        number:
+          type: integer
+          format: int32
+        sort:
+          $ref: '#/components/schemas/SortObject'
+        pageable:
+          $ref: '#/components/schemas/PageableObject'
+        numberOfElements:
+          type: integer
+          format: int32
+        first:
+          type: boolean
+        last:
+          type: boolean
+        empty:
+          type: boolean
+    PageableObject:
+      type: object
+      properties:
+        offset:
+          type: integer
+          format: int64
+        sort:
+          $ref: '#/components/schemas/SortObject'
+        paged:
+          type: boolean
+        unpaged:
+          type: boolean
+        pageNumber:
+          type: integer
+          format: int32
+        pageSize:
+          type: integer
+          format: int32
+    SortObject:
+      type: object
+      properties:
+        empty:
+          type: boolean
+        unsorted:
+          type: boolean
+        sorted:
+          type: boolean
