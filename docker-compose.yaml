@@ -91,11 +91,32 @@ services:
     volumes:
       - mongodb-data:/data/db
 #
-#  grafana:
+#  grafana-loki:
 #    image: 'grafana/loki:2.9.4'
 #    container_name: grafana
 #    ports:
 #      - '3100:3100'
+
+  victoria-metrics:
+    image: 'victoriametrics/victoria-metrics:v1.93.12'
+    container_name: victoria-metrics
+    ports:
+      - '8428:8428'
+    volumes:
+      - ./infrastructure/config/victoria-metrics/promscrape.yaml:/etc/prometheus/prometheus.yml
+    command:
+      - "--promscrape.config=/etc/prometheus/prometheus.yml"
+
+  grafana:
+    image: 'grafana/grafana:10.2.4'
+    container_name: grafana
+    ports:
+      - '3000:3000'
+    volumes:
+      - ./infrastructure/data/grafana:/var/lib/grafana
+    environment:
+      - CURRENT_UID=${UID}
+    user: "${CURRENT_UID}"
 
 volumes:
   postgres-data:

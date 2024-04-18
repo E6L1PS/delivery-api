@@ -1,0 +1,5 @@
+scrape_configs:
+  - job_name: admin-service
+    static_configs:
+      - targets: ["http://user-service:8081", "http://parcel-service:8082", "http://delivery-service:8083"]
+    metrics_path: /actuator/prometheus
