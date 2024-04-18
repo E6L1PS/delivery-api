@@ -90,6 +90,12 @@ services:
       - '27018:27017'
     volumes:
       - mongodb-data:/data/db
+#
+#  grafana:
+#    image: 'grafana/loki:2.9.4'
+#    container_name: grafana
+#    ports:
+#      - '3100:3100'
 
 volumes:
   postgres-data:

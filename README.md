@@ -17,18 +17,19 @@
 ## Запуск приложения
 
 1. Клонируйте репозиторий: `git clone https://github.com/E6L1PS/delivery-api`
-2. Перейдите в директорию проекта: `cd delivery-api`
-3. Если требуется, измените файлы конфигурации `.env`, `application.yml`.
+2. Перейдите в директорию infrastructure: `cd delivery-api/infrastructure`
+3. Если требуется, измените файл конфигурации `.env`.
 4. Запустите скрипт по созданию образов: `build-images-layered.sh`
-5. Запустите контейнеры: `docker compose up --build -d`
-6. API:
+5. Перейдите в директорию проекта: `cd delivery-api`
+6. Запустите контейнеры: `docker compose up --build -d`
+7. API:
    eureka-server: `http://localhost:8761/`
+   config-server: `http://localhost:8888/`
  OpenApi Specification:
    user-service: `http://localhost:8081/swagger-ui/index.html`
    parcel-service: `http://localhost:8082/swagger-ui/index.html`
    delivery-service: `http://localhost:8083/swagger-ui/index.html`
-
-7. Пользователь с ролью `ADMIN`: `username: admin, password: admin`
+8. Пользователь с ролью `ADMIN`: `username: admin, password: admin`
 
 P.S В папке ресурсов находятся все основные конфигурационные файлы, скрипты, changelog'и, csv-фалы, index.yaml:
 path: `user-service/src/main/resource`

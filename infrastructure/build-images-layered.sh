@@ -17,7 +17,7 @@ function build() {
   FOLDER=$1
   NAME=$2
 
-  docker build -f ./Dockerfile \
+  docker build -f ./infrastructure/Dockerfile \
     --build-arg JAR_FOLDER="${FOLDER}"/target \
     -t "${NAME}":latest \
     -t "${NAME}":layered .
