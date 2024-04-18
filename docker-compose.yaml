@@ -23,10 +23,26 @@ x-mongodb-healthcheck: &mongodb-healthcheck
 
 services:
 
+  eureka-server:
+    image: application/eureka-server:layered
+    container_name: eureka-server
+    <<: *api-config
+    env_file:
+      - .env
+    ports:
+      - '8761:8761'
+
+  config-server:
+    image: application/config-server:layered
+    container_name: config-server
+    <<: *api-config
+    env_file:
+      - .env
+    ports:
+      - '8888:8888'
+
   user-service:
-    build:
-      context: ./user-service
-      dockerfile: Dockerfile
+    image: application/user-service:layered
     container_name: user-service
     <<: *api-config
     env_file:
@@ -35,9 +51,7 @@ services:
       - '8081:8081'
 
   parcel-service:
-    build:
-      context: ./parcel-service
-      dockerfile: Dockerfile
+    image: application/parcel-service:layered
     container_name: parcel-service
     <<: *api-config
     env_file:
@@ -46,9 +60,7 @@ services:
       - '8082:8082'
 
   delivery-service:
-    build:
-      context: ./delivery-service
-      dockerfile: Dockerfile
+    image: application/delivery-service:layered
     container_name: delivery-service
     <<: *api-config
     env_file:
