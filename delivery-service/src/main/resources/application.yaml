@@ -3,7 +3,17 @@ server:
 spring:
   application:
     name: delivery-service
-
+  config:
+    import: 'optional:configserver:'
+  cloud:
+    config:
+      uri: http://localhost:8888
   data:
     mongodb:
       uri: mongodb://mongodb-parcel/delivery
+eureka:
+  client:
+    service-url:
+      defaultZone: http://eureka-server:8761/eureka/
+#  instance:
+#    prefer-ip-address: true
