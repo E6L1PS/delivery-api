@@ -32,15 +32,17 @@ echo "Building JAR files"
 mvn clean package -DskipTests
 
 echo "Unpacking JARs"
-unpack eureka-server eureka-server ${APP_VERSION}
 unpack config-server config-server ${APP_VERSION}
+unpack eureka-server eureka-server ${APP_VERSION}
+unpack api-gateway api-gateway ${APP_VERSION}
 unpack user-service user-service ${APP_VERSION}
 unpack delivery-service delivery-service ${APP_VERSION}
 unpack parcel-service parcel-service ${APP_VERSION}
 
 echo "Building Docker image"
-build eureka-server application/eureka-server
 build config-server application/config-server
+build eureka-server application/eureka-server
+build api-gateway application/api-gateway
 build user-service application/user-service
 build delivery-service application/delivery-service
 build parcel-service application/parcel-service

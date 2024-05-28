@@ -6,6 +6,22 @@ x-api-config: &api-config
       condition: service_healthy
     mongodb:
       condition: service_healthy
+    config-server:
+      condition: service_healthy
+
+x-eureka-healthcheck: &eureka-healthcheck
+  healthcheck:
+    interval: 5s
+    timeout: 10s
+    retries: 10
+    test: [ "CMD-SHELL", "wget --spider -q http://eureka-server:8761/actuator/health || exit 1" ]
+
+x-config-healthcheck: &config-healthcheck
+  healthcheck:
+    interval: 5s
+    timeout: 10s
+    retries: 10
+    test: [ "CMD-SHELL", "wget --spider -q http://config-server:8888/actuator/health || exit 1" ]
 
 x-postgres-healthcheck: &postgres-healthcheck
   healthcheck:
@@ -21,12 +37,22 @@ x-mongodb-healthcheck: &mongodb-healthcheck
     retries: 10
     test: echo 'db.runCommand("ping").ok' | mongosh 127.0.0.1:27017/test --quiet
 
+x-redis-healthcheck: &redis-healthcheck
+  healthcheck:
+    interval: 5s
+    timeout: 10s
+    retries: 10
+    test: [ "CMD", "redis-cli", "--raw", "incr", "ping" ]
+
 services:
 
   eureka-server:
     image: application/eureka-server:layered
     container_name: eureka-server
-    <<: *api-config
+    <<: *eureka-healthcheck
+    depends_on:
+      config-server:
+        condition: service_healthy
     env_file:
       - .env
     ports:
@@ -35,11 +61,22 @@ services:
   config-server:
     image: application/config-server:layered
     container_name: config-server
-    <<: *api-config
+    <<: *config-healthcheck
     env_file:
       - .env
     ports:
       - '8888:8888'
+
+  api-gateway:
+    image: application/api-gateway:layered
+    container_name: api-gateway
+    depends_on:
+      config-server:
+        condition: service_healthy
+    env_file:
+      - .env
+    ports:
+      - '8080:8080'
 
   user-service:
     image: application/user-service:layered
@@ -90,12 +127,19 @@ services:
       - '27018:27017'
     volumes:
       - mongodb-data:/data/db
-#
-#  grafana-loki:
-#    image: 'grafana/loki:2.9.4'
-#    container_name: grafana
-#    ports:
-#      - '3100:3100'
+
+  redis:
+    image: 'redis:7'
+    container_name: redis
+    <<: *redis-healthcheck
+    ports:
+      - '6379:6379'
+  #
+  #  grafana-loki:
+  #    image: 'grafana/loki:2.9.4'
+  #    container_name: grafana
+  #    ports:
+  #      - '3100:3100'
 
   victoria-metrics:
     image: 'victoriametrics/victoria-metrics:v1.93.12'
@@ -122,4 +166,6 @@ volumes:
   postgres-data:
     driver: local
   mongodb-data:
+    driver: local
+  redis-data:
     driver: local

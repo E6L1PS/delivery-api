@@ -6,6 +6,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ru.mai.delivery.dto.ParcelDto;
 import ru.mai.delivery.model.Parcel;
@@ -23,6 +24,8 @@ public class ParcelController {
 
     private final ParcelService parcelService;
 
+
+    @PreAuthorize("hasAnyAuthority({'ROLE_USER', 'ROLE_ADMIN'})")
     @GetMapping
     public ResponseEntity<Page<Parcel>> findAll(
             @RequestParam(value = "page", required = false, defaultValue = "0") Integer page,
@@ -33,6 +36,8 @@ public class ParcelController {
         return ResponseEntity.ok(parcels);
     }
 
+
+    @PreAuthorize("hasAnyAuthority({'ROLE_USER', 'ROLE_ADMIN'})")
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public ResponseEntity<Void> save(
@@ -42,6 +47,8 @@ public class ParcelController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
+
+    @PreAuthorize("hasAnyAuthority({'ROLE_USER', 'ROLE_ADMIN'})")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PutMapping
     public ResponseEntity<Void> update(
@@ -51,6 +58,7 @@ public class ParcelController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
+    @PreAuthorize("hasAnyAuthority({'ROLE_USER', 'ROLE_ADMIN'})")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(

@@ -4,16 +4,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.mai.delivery.config.JwtService;
-import ru.mai.delivery.dto.LoginDto;
 import ru.mai.delivery.dto.RegisterDto;
 import ru.mai.delivery.dto.TokenDto;
 import ru.mai.delivery.dto.UserInfoDto;
@@ -43,8 +39,6 @@ public class UserAccountServiceImpl implements UserAccountService {
 
     private final JwtService jwtService;
 
-    private final AuthenticationManager authenticationManager;
-
     private final UserAccountMapper userAccountMapper;
 
     private final PasswordEncoder passwordEncoder;
@@ -72,14 +66,8 @@ public class UserAccountServiceImpl implements UserAccountService {
     }
 
     @Override
-    public TokenDto authenticate(LoginDto loginDto) {
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        loginDto.username(),
-                        loginDto.password()
-                )
-        );
-        return jwtService.generateToken((UserDetails) authentication.getPrincipal());
+    public TokenDto authenticate(UserDetails userDetails) {
+        return jwtService.generateToken(userDetails);
     }
 
     @Override

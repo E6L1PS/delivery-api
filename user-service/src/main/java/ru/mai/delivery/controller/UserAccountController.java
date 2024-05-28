@@ -1,6 +1,7 @@
 package ru.mai.delivery.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -10,9 +11,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.mai.delivery.dto.LoginDto;
 import ru.mai.delivery.dto.RegisterDto;
 import ru.mai.delivery.dto.TokenDto;
 import ru.mai.delivery.dto.UserInfoDto;
@@ -60,18 +61,20 @@ public class UserAccountController {
     }
 
     @Operation(description = "Аутентификация пользователя")
+    @SecurityRequirement(name = "basicAuth")
     @ResponseStatus(HttpStatus.OK)
     @PostMapping("/auth")
     public ResponseEntity<TokenDto> authenticate(
-            @Valid @RequestBody LoginDto loginDto
+            @AuthenticationPrincipal UserDetails userDetails
     ) {
-        TokenDto tokenDto = userAccountService.authenticate(loginDto);
+        TokenDto tokenDto = userAccountService.authenticate(userDetails);
         return ResponseEntity.ok(tokenDto);
     }
 
     @Operation(description = "Обновление данных пользователя (текущего пользователя, который авторизован) {'ROLE_USER', 'ROLE_ADMIN'}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @SecurityRequirement(name = "bearerAuth")
     @PreAuthorize("hasAnyAuthority({'ROLE_USER', 'ROLE_ADMIN'})")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @PutMapping
     public ResponseEntity<Void> updateUserInfo(
             @RequestBody UserInfoDto userInfoDto,
@@ -94,8 +97,9 @@ public class UserAccountController {
     }
 
     @Operation(description = "Удаление пользователя по id. {'ROLE_ADMIN'}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @SecurityRequirement(name = "bearerAuth")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping
     public ResponseEntity<Void> deleteUserByUsername(
             @RequestParam("username") String username

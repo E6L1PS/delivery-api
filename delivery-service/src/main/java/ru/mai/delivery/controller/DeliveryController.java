@@ -6,6 +6,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ru.mai.delivery.dto.CurrentLocationDto;
 import ru.mai.delivery.dto.DeliveryDto;
@@ -24,6 +25,7 @@ public class DeliveryController {
 
     private final DeliveryService deliveryService;
 
+    @PreAuthorize("hasAnyAuthority({'ROLE_USER', 'ROLE_ADMIN'})")
     @GetMapping
     public ResponseEntity<Page<Delivery>> findAll(
             @RequestParam(value = "page", required = false, defaultValue = "0") Integer page,
@@ -33,6 +35,7 @@ public class DeliveryController {
         return ResponseEntity.ok(deliveryService.findAll(PageRequest.of(page, size, Sort.by(sortBy))));
     }
 
+    @PreAuthorize("hasAnyAuthority({'ROLE_USER', 'ROLE_ADMIN'})")
     @GetMapping("/sender/{senderId}")
     public ResponseEntity<?> findAllBySenderId(
             @PathVariable(name = "senderId") Long senderId
@@ -40,6 +43,7 @@ public class DeliveryController {
         return ResponseEntity.ok(deliveryService.findAllBySenderId(senderId));
     }
 
+    @PreAuthorize("hasAnyAuthority({'ROLE_USER', 'ROLE_ADMIN'})")
     @GetMapping("/recipient/{recipientId}")
     public ResponseEntity<?> findAllByRecipientId(
             @PathVariable(name = "recipientId") Long recipientId
@@ -47,6 +51,7 @@ public class DeliveryController {
         return ResponseEntity.ok(deliveryService.findAllByRecipientId(recipientId));
     }
 
+    @PreAuthorize("hasAnyAuthority({'ROLE_USER', 'ROLE_ADMIN'})")
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public ResponseEntity<Void> save(
@@ -65,6 +70,7 @@ public class DeliveryController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
+    @PreAuthorize("hasAnyAuthority({'ROLE_USER', 'ROLE_ADMIN'})")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(
@@ -74,6 +80,7 @@ public class DeliveryController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
+    @PreAuthorize("hasAnyAuthority({'ROLE_USER', 'ROLE_ADMIN'})")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PutMapping("/location")
     public ResponseEntity<Void> changeCurrentLocation(
