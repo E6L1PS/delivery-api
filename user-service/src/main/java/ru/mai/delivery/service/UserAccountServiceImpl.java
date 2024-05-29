@@ -2,6 +2,7 @@ package ru.mai.delivery.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -44,6 +45,7 @@ public class UserAccountServiceImpl implements UserAccountService {
     private final PasswordEncoder passwordEncoder;
 
     @Override
+    @Cacheable(key = "#firstName", value = "users")
     public Page<UserInfoDto> searchUsersByMask(String firstName, String lastName, PageRequest pageRequest) {
         return userAccountRepository.findByFirstNameLikeAndLastNameLike(firstName, lastName, pageRequest);
     }
