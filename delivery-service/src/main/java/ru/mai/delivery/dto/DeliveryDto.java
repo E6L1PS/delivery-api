@@ -6,7 +6,7 @@ package ru.mai.delivery.dto;
  * @author Pesternikov Danil
  */
 public record DeliveryDto(
-
+        String id,
         String parcelId,
         Long senderId,
         Long recipientId,

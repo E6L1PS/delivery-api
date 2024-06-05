@@ -46,3 +46,5 @@ build api-gateway application/api-gateway
 build user-service application/user-service
 build delivery-service application/delivery-service
 build parcel-service application/parcel-service
+
+read -p "Press any key to continue..."

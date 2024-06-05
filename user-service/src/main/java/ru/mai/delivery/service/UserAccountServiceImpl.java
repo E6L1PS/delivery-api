@@ -1,5 +1,6 @@
 package ru.mai.delivery.service;
 
+import jakarta.ws.rs.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
@@ -45,7 +46,12 @@ public class UserAccountServiceImpl implements UserAccountService {
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    @Cacheable(key = "#firstName", value = "users")
+    @Cacheable(key = "#id", value = "user")
+    public UserAccount searchUsersById(Long id) {
+        return userAccountRepository.findById(id).orElseThrow(() -> new NotFoundException("UserAccount by id:" + id + " not found"));
+    }
+
+    @Override
     public Page<UserInfoDto> searchUsersByMask(String firstName, String lastName, PageRequest pageRequest) {
         return userAccountRepository.findByFirstNameLikeAndLastNameLike(firstName, lastName, pageRequest);
     }

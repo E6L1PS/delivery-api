@@ -33,6 +33,15 @@ public class UserAccountController {
 
     public final UserAccountService userAccountService;
 
+    @Operation(description = "Поиск по id")
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/search/{id}")
+    public ResponseEntity<UserAccount> searchUserById(
+            @PathVariable Long id
+    ) {
+        return ResponseEntity.ok(userAccountService.searchUsersById(id));
+    }
+
     @Operation(description = "Поиск по маске")
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/search")

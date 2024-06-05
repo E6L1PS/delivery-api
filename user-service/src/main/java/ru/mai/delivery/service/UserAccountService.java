@@ -6,6 +6,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import ru.mai.delivery.dto.RegisterDto;
 import ru.mai.delivery.dto.TokenDto;
 import ru.mai.delivery.dto.UserInfoDto;
+import ru.mai.delivery.model.UserAccount;
 
 /**
  * Создан: 22.03.2024.
@@ -13,6 +14,8 @@ import ru.mai.delivery.dto.UserInfoDto;
  * @author Pesternikov Danil
  */
 public interface UserAccountService {
+
+    UserAccount searchUsersById(Long id);
 
     Page<UserInfoDto> searchUsersByMask(String firstName, String lastName, PageRequest pageRequest);
 
